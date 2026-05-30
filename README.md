@@ -1,6 +1,22 @@
+<div align="center">
+
 # 📄 Talk with PDF: RAG-Powered Chat Assistant
 
-> A full-stack Retrieval-Augmented Generation (RAG) application enabling users to upload PDF documents and interact with their contents in real-time. 
+**A full-stack Retrieval-Augmented Generation (RAG) application enabling users to upload PDF documents and interact with their contents in real-time.**
+
+[![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/)
+[![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)](https://www.python.org/)
+[![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)](https://en.wikipedia.org/wiki/HTML5)
+[![Vanilla JS](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+<br>
+[![LangChain](https://img.shields.io/badge/LangChain-FFFFFF?style=for-the-badge&logo=chainlink&logoColor=blue)](https://python.langchain.com/)
+[![HuggingFace](https://img.shields.io/badge/HuggingFace-FFD21E?style=for-the-badge&logo=huggingface&logoColor=000)](https://huggingface.co/)
+
+</div>
+
+---
+
+## ⚡ About The Project
 
 Built with a focus on performance and execution control, this system bypasses heavy declarative UI frameworks in favor of a lightweight **FastAPI** backend, a custom **LangChain** pipeline, and a highly responsive **JS/HTML** frontend with asynchronous streaming.
 
@@ -16,7 +32,8 @@ Built with a focus on performance and execution control, this system bypasses he
 
 ---
 
-## 📂 Project Structure
+<details>
+  <summary><b>📂 Click to expand Project Structure</b></summary>
 
 ```bash
 TALK_WITH_PDF/
@@ -32,6 +49,7 @@ TALK_WITH_PDF/
 ├── main.py                  # FastAPI application entry point
 └── requirements.txt         # Project dependencies
 ```
+</details>
 
 ---
 
@@ -94,7 +112,7 @@ Follow these steps to run the RAG system locally on your machine.
 
 ### 1. Clone the Repository
 ```bash
-git clone  https://github.com/Rabboni7773/Talk-With-PDF.git
+git clone [https://github.com/Rabboni7773/Talk-With-PDF.git](https://github.com/Rabboni7773/Talk-With-PDF.git)
 cd Talk-With-PDF
 ```
 
