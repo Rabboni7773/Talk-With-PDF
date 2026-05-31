@@ -2,7 +2,7 @@
 
 # 📄 Talk with PDF: RAG-Powered Chat Assistant
 
-**A full-stack Retrieval-Augmented Generation (RAG) application enabling users to upload PDF documents and interact with their contents in real-time.**
+**Retrieval-Augmented Generation (RAG) application enabling users to upload PDF documents and interact with their contents in real-time.**
 
 [![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/)
 [![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)](https://www.python.org/)
