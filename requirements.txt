@@ -1,0 +1,9 @@
+fastapi==0.136.3
+langchain_chroma==1.1.0
+langchain_classic==1.0.7
+langchain_community==0.4.2
+langchain_core==1.4.0
+langchain_groq==1.1.2
+langchain_huggingface==1.2.2
+pydantic==2.13.4
+python-dotenv==1.2.2

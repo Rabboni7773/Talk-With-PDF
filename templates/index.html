@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Chat Assistant - Upload</title>
+    <style>
+        /* --- CSS VARIABLES (Matched to Chat UI) --- */
+        :root {
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-color: #1f2937;
+            --text-muted: #6b7280;
+            --primary-color: #4f46e5;
+            --primary-hover: #4338ca;
+            --border-color: #e5e7eb;
+            --border-hover: #a5b4fc;
+            --dropzone-bg: #f9fafb;
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #111827;
+                --card-bg: #1f2937;
+                --text-color: #f9fafb;
+                --text-muted: #9ca3af;
+                --primary-color: #6366f1;
+                --primary-hover: #818cf8;
+                --border-color: #374151;
+                --border-hover: #6366f1;
+                --dropzone-bg: #111827;
+                --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+            }
+        }
+
+        /* --- BASIC RESET & LAYOUT --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            background: var(--bg-color); 
+            color: var(--text-color);
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            height: 100vh;
+            padding: 20px; 
+            transition: background 0.3s, color 0.3s;
+        }
+
+        /* --- MAIN CONTAINER --- */
+        .container { 
+            background: var(--card-bg); 
+            padding: 2.5rem; 
+            border-radius: 16px; 
+            box-shadow: var(--shadow-lg); 
+            width: 100%; 
+            max-width: 480px; 
+            text-align: center;
+            transition: background 0.3s; 
+        }
+
+        /* --- HEADER --- */
+        .header {
+            margin-bottom: 24px;
+        }
+        .header h2 { 
+            font-size: 1.5rem; 
+            font-weight: 600; 
+            margin-bottom: 8px;
+        }
+        .header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* --- CUSTOM DROPZONE --- */
+        .upload-section { 
+            position: relative; /* Crucial for hiding the input */
+            border: 2px dashed var(--border-color); 
+            background: var(--dropzone-bg);
+            padding: 40px 20px; 
+            border-radius: 12px; 
+            margin-bottom: 24px; 
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .upload-section:hover {
+            border-color: var(--border-hover);
+            background: rgba(99, 102, 241, 0.05); /* Slight indigo tint on hover */
+        }
+        
+        /* The actual input is invisible but covers the whole dropzone */
+        .upload-section input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        /* Dropzone Icon & Text */
+        .upload-icon {
+            width: 48px;
+            height: 48px;
+            color: var(--primary-color);
+            margin-bottom: 12px;
+        }
+        .file-name-display {
+            font-weight: 500;
+            font-size: 1rem;
+            margin-bottom: 4px;
+            color: var(--text-color);
+        }
+        .file-hint {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* --- BUTTON & STATUS --- */
+        button { 
+            background: var(--primary-color); 
+            color: white; 
+            border: none; 
+            padding: 14px 20px; 
+            border-radius: 30px; 
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer; 
+            width: 100%; 
+            transition: all 0.2s; 
+        }
+        button:hover { 
+            background: var(--primary-hover); 
+            transform: translateY(-1px);
+        }
+        button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        #status { 
+            margin-top: 20px; 
+            font-size: 0.9rem; 
+            font-weight: 500;
+            color: var(--text-muted); 
+            min-height: 20px; /* Prevents layout jump when text appears */
+        }
+        
+        /* Success specific color */
+        .status-success { color: #10b981 !important; }
+        .status-error { color: #ef4444 !important; }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Talk with PDF</h2>
+            <p>Upload your document to begin the conversation.</p>
+        </div>
+
+        <div class="upload-section" id="dropzone">
+            <input type="file" id="pdfFile" accept=".pdf" onchange="updateFileName()">
+            
+            <svg class="upload-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+            </svg>
+            <div class="file-name-display" id="file-name-display">Click or drag a PDF to upload</div>
+            <div class="file-hint">Accepts .pdf files only</div>
+        </div>
+
+        <button onclick="uploadPDF()" id="uploadbtn">Upload and Process</button>
+        <div id="status"></div>
+    </div>
+
+    <script>
+        // Update the UI instantly when a user selects a file
+        function updateFileName() {
+            const fileInput = document.getElementById('pdfFile');
+            const display = document.getElementById('file-name-display');
+            
+            if (fileInput.files.length > 0) {
+                // Show the name of the selected file
+                display.innerText = fileInput.files[0].name;
+                display.style.color = "var(--primary-color)";
+            } else {
+                display.innerText = "Click or drag a PDF to upload";
+                display.style.color = "var(--text-color)";
+            }
+        }
+
+        async function uploadPDF() {
+            const fileInput = document.getElementById('pdfFile');
+            const status = document.getElementById('status');
+            const uploadbtn = document.getElementById("uploadbtn");
+            
+            // Reset status classes
+            status.className = "";
+            
+            if (fileInput.files.length === 0) {
+                status.innerText = "Please select a file first.";
+                status.classList.add("status-error");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+
+            // UI Feedback during upload
+            status.innerText = "Uploading and processing document...";
+            uploadbtn.disabled = true;
+            uploadbtn.innerText = "Processing...";
+
+            try {
+                // 1. Upload the PDF
+                const response = await fetch("http://127.0.0.1:8000/upload", {
+                    method: "POST",
+                    body: formData
+                });
+                const data = await response.json();
+                
+                // 2. Check for success code
+                if (data.code === 200) {
+                    status.innerText = "Success: Document processed.";
+                    status.classList.add("status-success");
+                    
+                    uploadbtn.innerText = "Proceeding to Chat...";
+
+                    // 3. Redirect to the chat interface smoothly
+                    setTimeout(() => {
+                        window.location.href = "http://127.0.0.1:8000/chat";
+                    }, 800); // Tiny delay so the user can read the success message
+
+                } else {
+                    status.innerText = "Upload failed: " + (data.message || "Unknown error");
+                    status.classList.add("status-error");
+                    uploadbtn.disabled = false;
+                    uploadbtn.innerText = "Upload and Process";
+                }
+
+            } catch (error) {
+                status.innerText = "File Upload Error. Check your backend connection.";
+                status.classList.add("status-error");
+                console.error(error);
+                uploadbtn.disabled = false;
+                uploadbtn.innerText = "Upload and Process";
+            }
+        }
+    </script>
+</body>
+</html>
