@@ -217,7 +217,7 @@
 
             try {
                 // 1. Upload the PDF
-                const response = await fetch("http://127.0.0.1:8000/upload", {
+                const response = await fetch("http://127.0.0.1:8080/upload", {
                     method: "POST",
                     body: formData
                 });
@@ -232,7 +232,7 @@
 
                     // 3. Redirect to the chat interface smoothly
                     setTimeout(() => {
-                        window.location.href = "http://127.0.0.1:8000/chat";
+                        window.location.href = "http://127.0.0.1:8080/chat";
                     }, 800); // Tiny delay so the user can read the success message
 
                 } else {

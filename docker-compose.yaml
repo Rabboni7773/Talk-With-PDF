@@ -1,0 +1,39 @@
+services:
+  # 1. Your Custom FastAPI Application Layer
+  fastapi-api:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - "8080:8000"  # Expose your FastAPI on port 8080 to the world
+    env_file:
+      - .env
+    environment:
+      - CHROMA_HOST=chroma-service  # Tells Python to connect to the container service name!
+      - CHROMA_PORT=8000
+      - REDIS_URL=redis://redis-state:6379/0
+    restart: always
+    depends_on:
+      - chroma-service
+      - redis-state
+
+  # 2. Standalone Independent ChromaDB Service
+  chroma-service:
+    image: chromadb/chroma:1.5.10.dev106
+    ports:
+      - "8000"  # Map port 8001 on your Ubuntu host to Chroma's internal port 8000
+    environment:
+      - IS_PERSISTENT=TRUE         # Enforces writing data to disk, not keeping it in RAM
+      - ANONYMIZED_TELEMETRY=FALSE  # Disables background tracking logs
+    # volumes:
+      # This binds the folder on your Ubuntu drive directly into Chroma's container
+      # - ./data/chroma_storage:/chroma/chroma
+    restart: always
+
+  # 3. Short-Term Memory Cache (Redis)
+  redis-state:
+    image: redis:7-alpine
+    ports:
+      - "6379"
+    command: redis-server --appendonly yes
+    restart: always

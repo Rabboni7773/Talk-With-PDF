@@ -293,12 +293,19 @@
         scrollToBottom();
         sendBtn.disabled = true; 
 
+        sessionId = sessionStorage.getItem("session_id")
+
+        if(! sessionId){
+            sessionId = crypto.randomUUID()
+            sessionStorage.setItem("session_id" , sessionId)
+        }
+        
         try {
             // 3. API Call
-            const response = await fetch('http://127.0.0.1:8000/chat/retrive', {
+            const response = await fetch('http://127.0.0.1:8080/chat/retrive', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ query: text })
+                body: JSON.stringify({ query: text, sessionId : sessionId })
             });
 
             if (!response.ok) throw new Error('Network response was not ok');

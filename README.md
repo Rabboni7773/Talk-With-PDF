@@ -1,78 +1,75 @@
 <div align="center">
 
-# 📄 Talk with PDF: RAG-Powered Chat Assistant
+# 📄 Talk with PDF: Enterprise Edition
+**A Production-Ready, Decoupled Retrieval-Augmented Generation (RAG) Microservices Architecture.**
 
-**A full-stack Retrieval-Augmented Generation (RAG) application enabling users to upload PDF documents and interact with their contents in real-time.**
-
-[![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/)
-[![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)](https://www.python.org/)
-[![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)](https://en.wikipedia.org/wiki/HTML5)
-[![Vanilla JS](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
-<br>
-[![LangChain](https://img.shields.io/badge/LangChain-FFFFFF?style=for-the-badge&logo=chainlink&logoColor=blue)](https://python.langchain.com/)
-[![HuggingFace](https://img.shields.io/badge/HuggingFace-FFD21E?style=for-the-badge&logo=huggingface&logoColor=000)](https://huggingface.co/)
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![ChromaDB](https://img.shields.io/badge/ChromaDB-FC6C05?style=for-the-badge)
+![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)
+![Microservices](https://img.shields.io/badge/Architecture-Decoupled-8A2BE2?style=for-the-badge)
 
 </div>
 
----
-
-## ⚡ About The Project
-
-Built with a focus on performance and execution control, this system bypasses heavy declarative UI frameworks in favor of a lightweight **FastAPI** backend, a custom **LangChain** pipeline, and a highly responsive **JS/HTML** frontend with asynchronous streaming.
+> **Talk with PDF** has been entirely re-architected for production environments. Moving away from tightly coupled components, this iteration completely decouples the FastAPI backend, the ChromaDB vector database, and the Redis state cache into independent, highly stable microservices. This design ensures maximum uptime, isolated fault tolerance, and independent scaling capabilities, while bypassing heavy declarative UI frameworks in favor of a lightweight, highly responsive JS/HTML frontend with asynchronous streaming.
 
 ---
 
-## 🛠️ Tech Stack & Key Libraries
-* **Backend API:** FastAPI, Uvicorn, Pydantic
-* **RAG Pipeline:** LangChain (LCEL)
-* **Embeddings:** HuggingFace (`BAAI/bge-small-en-v1.5`)
-* **LLM Engine:** ChatGroq (`openai/gpt-oss-120b`)
-* **Vector Database:** ChromaDB
-* **Frontend:** HTML5, CSS3, JavaScript (Streams API / SSE), Marked.js
+## ✨ Production-Grade Features
+
+* **🏗️ Decoupled Microservices:** The application logic, vector storage, and state management are isolated into dedicated containers. If one service spikes in load, the others remain fully stable.
+* **🎨 Clean Web Interface:** A lightweight, highly responsive frontend built with standard HTML, CSS, and vanilla JavaScript (Streams API / SSE), rendered perfectly with Marked.js.
+* **⚡ Real-Time Streaming:** Enjoy fluid, typewriter-style LLM responses streamed directly to the UI using asynchronous Python generators via Server-Sent Events.
+* **🐳 Advanced Containerization:** Fully orchestrated using Docker Compose, establishing secure internal networks between the API, ChromaDB, and Redis.
+* **🧠 Distributed Conversational Memory:** Maintains session-specific chat history via a standalone Redis node, replacing the older sliding-window array to allow the LLM to contextually track conversations across multiple stateless API requests.
+* **🔍 High-Performance RAG Pipeline:** Ingests documents with LangChain (LCEL), maps semantics with HuggingFace embeddings (`BAAI/bge-small-en-v1.5`), and executes high-speed retrieval from the isolated Chroma container.
 
 ---
 
-<details>
-  <summary><b>📂 Click to expand Project Structure</b></summary>
+## 🛠️ Decoupled Technology Stack
 
-```bash
-TALK_WITH_PDF/
-├── data/
-│   ├── files/               # Temporary storage for ingested PDFs
-│   └── vectorstore/         # Persistent ChromaDB collections
-├── templates/
-│   ├── index.html           # Drag-and-drop file upload interface
-│   └── n_chat.html          # Interactive streaming chat UI
-├── utils/
-│   └── rag_system.py        # Core LangChain pipeline & memory management
-├── .env                     # Environment variables (API keys)
-├── main.py                  # FastAPI application entry point
-└── requirements.txt         # Project dependencies
+| Service Layer | Technology | Role in Architecture |
+| :--- | :--- | :--- |
+| **Application API** | FastAPI, Uvicorn, Pydantic | Stateless API gateway and orchestration layer handling client requests, RAG pipelines, and LLM communication. |
+| **Frontend Client** | HTML5 / CSS3 / Vanilla JS | Native web technologies serving a fast, responsive UI natively. |
+| **LLM Engine** | ChatGroq | Utilizing `openai/gpt-oss-120b` for ultra-fast, low-latency inference. |
+| **Embeddings** | HuggingFace | Utilizing `BAAI/bge-small-en-v1.5` for accurate semantic mapping. |
+| **Vector Database** | ChromaDB | Isolated container strictly handling high-throughput vector embedding storage and nearest-neighbor retrieval. |
+| **State Management** | Redis | Dedicated caching layer persisting ephemeral user session histories independent of the core API. |
+
+---
+
+## 📁 Architecture & Project Structure
+
+```text
+📦 talk-with-pdf
+ ┣ 📂 templates/             # Frontend UI views
+ │ ┣ 📜 index.html         # Document upload dropzone
+ │ ┗ 📜 n_chat.html        # Main streaming chat interface
+ ┣ 📂 utils/                 # Core logic
+ │ ┗ 📜 rag_system.py      # Core LangChain pipeline & Chroma client
+ ┣ 📜 .env                   # Environment variables (API keys)
+ ┣ 📜 docker-compose.yaml    # Multi-container microservice orchestration
+ ┣ 📜 Dockerfile             # Stateless API image build instructions
+ ┣ 📜 main.py                # FastAPI entry point & routes
+ ┗ 📜 requirements.txt       # Python dependencies
 ```
-</details>
 
 ---
 
-## 🚀 Backend Architecture
+## 🚀 Backend API & Endpoints
 
-The backend is driven by **FastAPI** (`main.py`), responsible for serving static templates, handling local file operations, and managing the asynchronous streaming of LLM responses back to the client.
+The backend is driven by **FastAPI** (`main.py`), acting as a stateless gateway for serving templates, handling file operations, and managing the asynchronous streaming of LLM responses.
 
-### API Endpoints
-
-* `GET /`
-    Serves the initial file upload interface (`index.html`) via `Jinja2Templates`.
-* `POST /upload`
-    Handles incoming `multipart/form-data`. Uploaded PDFs are securely written to the local `/data/files/` directory using `shutil.copyfileobj`.
-* `GET /chat`
-    Triggers the document ingestion and vector database creation (`rag.create_vec_store()`), then serves the chat interface (`n_chat.html`).
-* `POST /chat/retrive`
-    The core interaction endpoint. Accepts a JSON payload validated via Pydantic (`ChatQuery`), routes the query through the LangChain pipeline, and returns an asynchronous `StreamingResponse` using Server-Sent Events (SSE).
-
-> **Developer Note:** File paths are currently hardcoded to absolute paths for a local Ubuntu development environment (`/home/rabboni/...`).
+* `GET /`: Serves the initial file upload interface (`index.html`) via `Jinja2Templates`.
+* `POST /upload`: Handles incoming `multipart/form-data`. Uploaded PDFs are securely written to the container's temporary storage.
+* `GET /chat`: Triggers the document ingestion and vector database creation, then serves the chat interface (`n_chat.html`).
+* `POST /chat/retrive`: The core interaction endpoint. Accepts a JSON payload validated via Pydantic (`ChatQuery`), routes the query through the LangChain pipeline, and returns an asynchronous `StreamingResponse` using Server-Sent Events (SSE).
 
 ---
 
-## 🧠 The RAG Pipeline
+## 🧠 The RAG Pipeline Data Flow
 
 The retrieval logic is encapsulated within the `RAGSystem` class (`utils/rag_system.py`), designed around LangChain Expression Language (LCEL) for optimal data flow.
 
@@ -80,14 +77,11 @@ The retrieval logic is encapsulated within the `RAGSystem` class (`utils/rag_sys
 * **Extraction:** `PyMuPDFLoader` parses the raw text from the uploaded PDF.
 * **Chunking:** A `RecursiveCharacterTextSplitter` divides the text into overlapping semantic chunks (Chunk Size: `500`, Overlap: `50`).
 * **Vectorization:** Embeddings are generated using the lightweight, highly efficient HuggingFace endpoint `BAAI/bge-small-en-v1.5`.
-* **Storage:** Chunks are persisted in a local **ChromaDB** instance. The collection namespace is dynamically generated by sanitizing the uploaded PDF filename.
+* **Isolated Storage:** Chunks are securely transmitted over the internal Docker network to be stored in the dedicated **ChromaDB** container under a unique session ID.
 
-### 2. Retrieval & Generation
-* **Parallel Execution:** A `RunnableParallel` chain executes the retrieval. It pulls the top 2 most semantically relevant chunks (`k=2`) from ChromaDB while simultaneously passing the user query and conversational history forward.
-* **Prompt Engineering:** The system prompt strictly anchors the LLM to the retrieved context, instructing it to gracefully reject out-of-scope queries and cite document sources when providing answers.
-
-### 3. Memory Management
-To maintain context without exhausting token limits, the `RAGSystem` implements a **Sliding Window Memory**. The internal `msg_hist` array strictly caps at the 10 most recent exchanges (Human/AI message pairs), automatically purging older context as the conversation progresses.
+### 2. Distributed Retrieval & Generation
+* **Parallel Execution:** A `RunnableParallel` chain executes the retrieval. It pulls the top 2 most semantically relevant chunks (`k=2`) from the Chroma service while independently retrieving the user's chat history from the **Redis** node.
+* **Prompt Engineering:** The system prompt strictly anchors the LLM to the retrieved context, instructing it to gracefully reject out-of-scope queries and cite document sources when providing answers. The Groq LLM streams the formatted markdown response back through the API gateway.
 
 ---
 
@@ -102,34 +96,21 @@ The frontend utilizes clean, standard web technologies to communicate with the F
 
 ---
 
-## ⚙️ Local Setup & Installation
+## 🚀 Deployment Guide
 
-Follow these steps to run the RAG system locally on your machine.
+This decoupled architecture is designed for robust deployment on Linux environments.
 
 ### Prerequisites
-* **Python 3.10+**
+* **Docker and Docker Compose** installed on your machine.
 * API Keys for **Groq** and **HuggingFace**
 
 ### 1. Clone the Repository
 ```bash
-git clone [https://github.com/Rabboni7773/Talk-With-PDF.git](https://github.com/Rabboni7773/Talk-With-PDF.git)
+git clone https://github.com/Rabboni7773/Talk-With-PDF.git
 cd Talk-With-PDF
 ```
 
-### 2. Set Up a Virtual Environment
-It is highly recommended to isolate your dependencies using a virtual environment.
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-```
-
-### 3. Install Dependencies
-Ensure your `requirements.txt` includes all necessary packages (e.g., `fastapi`, `uvicorn`, `python-multipart`, `langchain`, `langchain-groq`, `langchain-chroma`, `pymupdf`).
-```bash
-pip install -r requirements.txt
-```
-
-### 4. Configure Environment Variables
+### 2. Configure Environment Variables
 Create a `.env` file in the root directory to store your API keys safely.
 ```bash
 touch .env
@@ -137,24 +118,18 @@ touch .env
 Add the following to your `.env` file:
 ```ini
 GROQ_API_KEY="your_groq_api_key_here"
-HUGGINGFACEHUB_API_TOKEN="your_huggingface_api_key_here"
+HF_API="your_huggingface_api_key_here"
 ```
+*(Note: Internal network variables connecting the API to the standalone `CHROMA_HOST` and `REDIS_URL` are strictly managed via Docker Compose for enhanced security, eliminating the need for hardcoded local paths.)*
 
-### 5. Update File Paths (Important)
-Currently, the application uses absolute paths specific to the original development environment. Before running, open `main.py` and `utils/rag_system.py` and update the paths to be relative, or match your local system. 
-
-For example, change:
-`/home/rabboni/Desktop/talk_with_pdf/data/files`
-To a relative path:
-`./data/files`
-
-### 6. Run the Application
-Start the FastAPI server using Uvicorn.
+### 3. Build and Launch the Microservices
+Spin up the entire decoupled stack—initiating the FastAPI gateway, Redis cache node, and ChromaDB service independently:
 ```bash
-uvicorn main:app --reload
+docker-compose up --build -d
 ```
 
-### 7. Access the UI
+### 4. Access the UI
 Open your web browser and navigate to:
-* **Upload Interface:** `http://127.0.0.1:8000/`
-* **Chat Interface:** `http://127.0.0.1:8000/chat` (You will be redirected here automatically after a successful upload).
+* **Upload Interface:** `http://localhost:8080/`
+* **Chat Interface:** `http://localhost:8080/chat` (You will be redirected here automatically after a successful upload).
+</div>
