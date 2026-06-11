@@ -7,3 +7,8 @@ langchain_groq==1.1.2
 langchain_huggingface==1.2.2
 pydantic==2.13.4
 python-dotenv==1.2.2
+jinja2
+python-multipart
+pymupdf
+redis
+chroma
