@@ -51,8 +51,8 @@ class RAGSystem:
             chunks = splitter.split_documents([doc])
             self.vec_store.add_documents(chunks)
 
-    if os.path.exists(self.file_path):
-        os.remove(self.file_path)
+        if os.path.exists(self.file_path):
+            os.remove(self.file_path)
 
 
     def __docs_prcx(self, docs):
