@@ -302,7 +302,7 @@
         
         try {
             // 3. API Call
-            const response = await fetch('http://127.0.0.1:8080/chat/retrive', {
+            const response = await fetch('/chat/retrive', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ query: text, sessionId : sessionId })
