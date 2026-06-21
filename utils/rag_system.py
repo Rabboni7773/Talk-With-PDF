@@ -1,14 +1,13 @@
 from langchain_community.document_loaders import PyMuPDFLoader
 from langchain_chroma import Chroma
-from langchain_classic.text_splitter import RecursiveCharacterTextSplitter
+from langchain_text_splitter import RecursiveCharacterTextSplitter
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableParallel
 from langchain_core.prompts import MessagesPlaceholder
 from langchain_core.output_parsers import StrOutputParser
 from langchain_groq import ChatGroq
 from langchain_huggingface import HuggingFaceEndpointEmbeddings
-from langchain_community.chat_message_histories import RedisChatMessageHistory
-from langchain_core.runnables.history import RunnableWithMessageHistory
+from langchain_core.chat_history import InMemoryChatMessageHistory
 import chromadb
 import uuid
 import json
@@ -17,7 +16,7 @@ import re
 from dotenv import load_dotenv
 
 load_dotenv()
-
+store = {}
 class RAGSystem:
     def __init__(self):
         self.file_path = None
@@ -25,43 +24,46 @@ class RAGSystem:
         self.msg_hist = []
         self.emb_func = HuggingFaceEndpointEmbeddings(repo_id= "BAAI/bge-small-en-v1.5", huggingfacehub_api_token=os.getenv("HF_API"))
         self.llm = ChatGroq(model = "openai/gpt-oss-120b", api_key= os.getenv("GROQ_API_KEY"), max_tokens=2048)
-        self.chroma_host = os.getenv("CHROMA_HOST", "localhost")
-        self.chroma_port = int(os.getenv("CHROMA_PORT", "8000"))
-        self.chroma_client = chromadb.HttpClient(
-            host= self.chroma_host,
-            port= self.chroma_port
-        )
+        self.chroma_client = chromadb.PersistentClient(path = "./chroma_db")
         self.vec_store = Chroma(
             client= self.chroma_client,
-            port = self.chroma_port,
+            embedding_function = self.emb_func,
             collection_name = f"session_{uuid.uuid4()}"
         )
 
 
 
     def create_vec_store(self):
-        self.file_path = os.path.join("/app/file_storage", os.listdir("/app/file_storage")[0])
-        #cleaning file name for vector store
-        self.filename = re.sub(r"[^a-zA-Z0-9]", "", os.listdir("/app/file_storage")[0])
 
+        storage_dir = "/app/file_storage"
+
+        if not os.path.exists(storage_dir) or not os.listdir(storage_dir):
+            print("No files found in storage directory.")
+            return
+
+        self.file_path = os.path.join(storage_dir, os.listdir(storage_dir)[0])
+        self.filename = re.sub(r"[^a-zA-Z0-9]", "", os.listdir(storage_dir)[0])
+        
         splitter = RecursiveCharacterTextSplitter(chunk_size = 500, chunk_overlap = 50)
         loader = PyMuPDFLoader(self.file_path)
         docs = loader.lazy_load()
         for doc in docs:
             chunks = splitter.split_documents([doc])
             self.vec_store.add_documents(chunks)
+
+    if os.path.exists(self.file_path):
         os.remove(self.file_path)
 
 
     def __docs_prcx(self, docs):
         return "\n\n".join(doc.page_content + "\n" + json.dumps(doc.metadata) for doc in docs)
     
-    def __get_redis_db(self, session_id : str):
-        return RedisChatMessageHistory(
-            session_id=session_id,
-            url= os.getenv("REDIS_URL"),
-            ttl = 300
-        )
+    def __get_chat_history(self, session_id : str):
+        if session_id in store:
+            return store[session_id]
+        else:
+            store[session_id] = InMemoryChatMessageHistory()
+            return store[session_id]
     
 
     def retrive(self, quary : str, session_id : str):
@@ -88,13 +90,10 @@ class RAGSystem:
 
         main_chain = RunnableWithMessageHistory(
             chain,
-            self.__get_redis_db,
+            self.__get_chat_history,
             input_messages_key="quary",
             history_messages_key="history"
         )
 
         responce = main_chain.invoke({"quary" : quary}, config={"configurable" : {"session_id" : session_id}})
         return responce
-
-if __name__ == "__main__":
-    os.rmdir("/home/rabboni/Desktop/talk_with_pdf/data/vectorstore")
